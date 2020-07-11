@@ -12,8 +12,9 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
     }
 
-    fun toAlarm (view: View) {
-        val intent = Intent(this, AlarmActivity::class.java)
+    fun testDatabase(view: View) {
+        val intent = Intent(this, DiaryActivity::class.java)
         startActivity(intent)
     }
+
 }
