@@ -1,13 +1,19 @@
 package com.lifestrim.alarmdiary.db.entity
 
 import androidx.room.*
+import com.lifestrim.alarmdiary.util.DateTypeConverter
 import java.util.*
 
-@Entity
+@Entity (tableName = "note_table")
 data class Note (
-    @PrimaryKey val noteId: Int,
-    @ColumnInfo(name = "noteTitle") val noteTitle: String
-    /*@ColumnInfo(name = "noteText") val noteText: String,
-    @ColumnInfo(name = "noteDateCreate")  val noteDateCreate: Date?,
-    @ColumnInfo(name = "noteDateChanged") val noteDateChanged: Date?*/
-)
+    @ColumnInfo(name = "title")
+    val noteTitle: String,
+    @ColumnInfo(name = "text")
+    val noteText: String,
+    @ColumnInfo(name = "createDate")
+    val noteCreateDate: Date
+
+) {
+    @PrimaryKey(autoGenerate = true)
+    var id: Int = 0
+}

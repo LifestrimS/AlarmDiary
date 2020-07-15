@@ -1,6 +1,7 @@
-package com.lifestrim.alarmdiary.db
+package com.lifestrim.alarmdiary.util
 
 import androidx.room.TypeConverter
+import java.text.SimpleDateFormat
 import java.util.*
 
 class DateTypeConverter {
@@ -13,4 +14,5 @@ class DateTypeConverter {
     fun dateToTimestamp(date: Date?): Long? {
         return date?.time
     }
+
 }
