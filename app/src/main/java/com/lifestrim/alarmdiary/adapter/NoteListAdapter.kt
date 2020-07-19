@@ -1,6 +1,8 @@
 package com.lifestrim.alarmdiary.adapter
 
 import android.annotation.SuppressLint
+import android.graphics.Color
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,6 +12,7 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.lifestrim.alarmdiary.R
 import com.lifestrim.alarmdiary.db.entity.Note
+import com.lifestrim.alarmdiary.db.repository.CategoryRepository
 import com.lifestrim.alarmdiary.util.DateConverter
 
 class NoteListAdapter : ListAdapter<Note, NoteListAdapter.NoteViewHolder>(DiffCallback()) {
@@ -22,6 +25,7 @@ class NoteListAdapter : ListAdapter<Note, NoteListAdapter.NoteViewHolder>(DiffCa
         val noteItemTitle: TextView = itemView.findViewById(R.id.twNoteTitle)
         val noteItemText: TextView = itemView.findViewById(R.id.twNoteText)
         val noteItemDate: TextView = itemView.findViewById(R.id.twNoteDate)
+        val noteBackStrip: View = itemView.findViewById(R.id.noteBackStrip)
 
         init {
             itemView.setOnClickListener {
@@ -60,6 +64,12 @@ class NoteListAdapter : ListAdapter<Note, NoteListAdapter.NoteViewHolder>(DiffCa
         holder.noteItemTitle.text = current.noteTitle
         holder.noteItemText.text = current.noteText
         holder.noteItemDate.text = DateConverter().getDayMonthHoursMinute(current.noteCreateDate)
+
+        val color: Int
+        color = current.category.colorCategory ?: Color.rgb(255, 255, 255)
+        holder.noteBackStrip.setBackgroundColor(color)
+        Log.d("TAG", "color in NoteListAdapter: ${current.category.colorCategory}")
+        //current.category.colorCategory?.let { holder.noteBackStrip.setBackgroundColor(it) }
 
     }
 

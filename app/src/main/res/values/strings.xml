@@ -1,9 +1,19 @@
 <resources>
     <string name="app_name">AlarmDiary</string>
     <string name="add_word">Add</string>
-    <string name="hint_title">Title...</string>
-    <string name="hint_text">Text...</string>
+    <string name="hint_title">Title…</string>
+    <string name="hint_text">Text…</string>
     <string name="button_save">Save</string>
     <string name="empty_not_saved">Word not saved because it is empty.</string>
     <string name="delete">Delete</string>
+    <string name="buttonAdd">+ category</string>
+
+    <string name="nav_item1">nav_item1</string>
+    <string name="nav_item2">nav_item2</string>
+    <string name="nav_item3">nav_item3</string>
+    <string name="category_name">Category name…</string>
+
+    <string name="category_name_empty">You need to enter name of category!</string>
+    <string name="title_and_text_empty">Please Enter a Title and Text and select category</string>
+    <string name="delete_category">- category</string>
 </resources>

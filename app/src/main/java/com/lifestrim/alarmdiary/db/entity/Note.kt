@@ -1,6 +1,7 @@
 package com.lifestrim.alarmdiary.db.entity
 
 import androidx.room.*
+import androidx.room.ForeignKey.*
 import com.lifestrim.alarmdiary.util.DateTypeConverter
 import java.util.*
 
@@ -11,7 +12,9 @@ data class Note (
     @ColumnInfo(name = "text")
     val noteText: String,
     @ColumnInfo(name = "createDate")
-    val noteCreateDate: Date
+    val noteCreateDate: Date,
+    @Embedded (prefix = "category")
+    val category: Category
 
 ) {
     @PrimaryKey(autoGenerate = true)
