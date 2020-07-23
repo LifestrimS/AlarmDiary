@@ -4,7 +4,9 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.view.Menu
 import android.view.MenuItem
+import android.widget.SearchView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
@@ -47,15 +49,21 @@ class MainActivity : AppCompatActivity() {
             Analytics::class.java, Crashes::class.java
         )
 
+
         val recyclerView = findViewById<RecyclerView>(R.id.recyclerview)
         val adapter = NoteListAdapter()
         recyclerView.adapter = adapter
+        recyclerView.setHasFixedSize(true)
         recyclerView.layoutManager = LinearLayoutManager(this)
+
 
         noteViewModel = ViewModelProvider(this).get(NoteViewModel::class.java)
         noteViewModel.allNotes.observe(this, Observer { notes ->
-            // Update the cached copy of the notes in the adapter.
-            notes?.let { adapter.setNotes(it) }
+            notes?.let {
+                adapter.setNotes(it)
+                Log.d("TAG", "ViewModel setNotes: $it")
+            }
+            Log.d("TAG", "ViewModel work")
         })
 
         val fab = findViewById<FloatingActionButton>(R.id.fab)
@@ -64,9 +72,16 @@ class MainActivity : AppCompatActivity() {
             startActivityForResult(intent, MainActivity.ADD_NOTE_REQUEST)
         }
 
-        val itemTouchCallback = object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT.or(
-            ItemTouchHelper.RIGHT)) {
-            override fun onMove(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder, target: RecyclerView.ViewHolder): Boolean {
+        val itemTouchCallback = object : ItemTouchHelper.SimpleCallback(
+            0, ItemTouchHelper.LEFT.or(
+                ItemTouchHelper.RIGHT
+            )
+        ) {
+            override fun onMove(
+                recyclerView: RecyclerView,
+                viewHolder: RecyclerView.ViewHolder,
+                target: RecyclerView.ViewHolder
+            ): Boolean {
                 return false
             }
 
@@ -91,18 +106,30 @@ class MainActivity : AppCompatActivity() {
         val itemTouchHelper = ItemTouchHelper(itemTouchCallback)
         itemTouchHelper.attachToRecyclerView(recyclerView)
 
+
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                return false
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                adapter.filter.filter(newText)
+                return false
+            }
+
+        })
+
     }
 
 
-
-    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
-        when (item!!.itemId) {
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
             android.R.id.home -> {
                 val bottomNavDrawerFragment = BottomNavigationDrawerFragment()
                 bottomNavDrawerFragment.show(supportFragmentManager, bottomNavDrawerFragment.tag)
             }
-        }
 
+        }
         return true
     }
 
@@ -123,7 +150,7 @@ class MainActivity : AppCompatActivity() {
 
             Log.d("TAG", "color in MainActivity: $categoryColor")
 
-            val note = Note(title!!, description!!, Calendar.getInstance().time, noteCategory )
+            val note = Note(title!!, description!!, Calendar.getInstance().time, noteCategory)
 
             noteViewModel.insertNote(note)
             Toast.makeText(this, "Note Saved", Toast.LENGTH_SHORT).show()

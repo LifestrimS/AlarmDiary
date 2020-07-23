@@ -1,10 +1,9 @@
 package com.lifestrim.alarmdiary.db.entity
 
 import androidx.room.*
-import androidx.room.ForeignKey.*
-import com.lifestrim.alarmdiary.util.DateTypeConverter
 import java.util.*
 
+@SuppressWarnings(RoomWarnings.PRIMARY_KEY_FROM_EMBEDDED_IS_DROPPED)
 @Entity (tableName = "note_table")
 data class Note (
     @ColumnInfo(name = "title")
