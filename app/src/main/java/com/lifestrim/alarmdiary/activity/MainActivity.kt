@@ -32,13 +32,15 @@ import kotlinx.android.synthetic.main.activity_new_note.*
 import java.util.*
 
 //TODO сразу открывает клавиатуру
-//TODO поиск по тексту
 
 class MainActivity : AppCompatActivity() {
     companion object {
         const val ADD_NOTE_REQUEST = 1
         const val EDIT_NOTE_REQUEST = 2
     }
+
+    lateinit var recyclerView : RecyclerView
+    val adapter = NoteListAdapter()
 
     private lateinit var noteViewModel: NoteViewModel
 
@@ -56,8 +58,8 @@ class MainActivity : AppCompatActivity() {
         )
 
 
-        val recyclerView = findViewById<RecyclerView>(R.id.recyclerview)
-        val adapter = NoteListAdapter()
+        recyclerView = findViewById(R.id.recyclerview)
+        //val adapter = NoteListAdapter()
         recyclerView.adapter = adapter
         recyclerView.setHasFixedSize(true)
         recyclerView.layoutManager = LinearLayoutManager(this)
@@ -67,9 +69,7 @@ class MainActivity : AppCompatActivity() {
         noteViewModel.allNotes.observe(this, Observer { notes ->
             notes?.let {
                 adapter.setNotes(it)
-                Log.d("TAG", "ViewModel setNotes: $it")
             }
-            Log.d("TAG", "ViewModel work")
         })
 
         val fab = findViewById<FloatingActionButton>(R.id.fab)
@@ -192,15 +192,23 @@ class MainActivity : AppCompatActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
 
-        Toast.makeText(this, item.title.toString(), Toast.LENGTH_SHORT).show()
+        if (item.itemId == 0) {
+            noteViewModel.allNotes.observe(this, Observer { notes ->
+                notes?.let {
+                    adapter.setNotes(it)
+                }
+            })
+        } else {
+            Log.d("TAG", "onOptionsItemSelected 1")
+            //noteViewModel = ViewModelProvider(this).get(NoteViewModel::class.java)
+            noteViewModel.allNotes.observe(this, Observer { notes ->
+                notes?.let {
+                    adapter.setNotesByCategory(it, item.title.toString())
+                    Log.d("TAG", "item.title: ${item.title}")
+                }
+            })
+        }
 
-        /*when (item.itemId) {
-            android.R.id.home -> {
-                val bottomNavDrawerFragment = BottomNavigationDrawerFragment()
-                bottomNavDrawerFragment.show(supportFragmentManager, bottomNavDrawerFragment.tag)
-            }
-
-        }*/
         return true
     }
 }

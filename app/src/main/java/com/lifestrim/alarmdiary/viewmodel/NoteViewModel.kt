@@ -6,6 +6,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.viewModelScope
 import com.lifestrim.alarmdiary.db.repository.NoteRepository
 import com.lifestrim.alarmdiary.db.database.NoteRoomDatabase
+import com.lifestrim.alarmdiary.db.entity.Category
 import com.lifestrim.alarmdiary.db.entity.Note
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -34,4 +35,8 @@ class NoteViewModel(application: Application) : AndroidViewModel(application) {
     fun deleteNote(note: Note) = viewModelScope.launch(Dispatchers.IO) {
         repository.deleteNote(note)
     }
+
+    /*fun getNoteByCategory(categoryName: Category) = viewModelScope.launch(Dispatchers.IO) {
+        repository.getNoteByCategory(categoryName)
+    }*/
 }

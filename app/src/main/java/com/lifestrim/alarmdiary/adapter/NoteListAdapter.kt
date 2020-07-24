@@ -9,16 +9,12 @@ import android.view.ViewGroup
 import android.widget.Filter
 import android.widget.Filterable
 import android.widget.TextView
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.lifestrim.alarmdiary.R
 import com.lifestrim.alarmdiary.db.entity.Note
-import com.lifestrim.alarmdiary.db.repository.CategoryRepository
-import com.lifestrim.alarmdiary.db.repository.NoteRepository
 import com.lifestrim.alarmdiary.util.DateConverter
-import com.lifestrim.alarmdiary.viewmodel.NoteViewModel
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -91,6 +87,21 @@ class NoteListAdapter : ListAdapter<Note, NoteListAdapter.NoteViewHolder>(DiffCa
         this.noteFilterList = notes
         notifyDataSetChanged()
     }
+
+    fun setNotesByCategory(notes: List<Note>, categoryName: String) {
+        val notesWithCategory: MutableList<Note> = mutableListOf()
+        notes.forEach() {
+            if (it.category.nameCategory == categoryName) {
+                notesWithCategory.add(it)
+            }
+        }
+        Log.d("TAG", "notesListCategory: $notesWithCategory")
+        this.notes = notesWithCategory
+        this.noteFilterList = notesWithCategory
+        notifyDataSetChanged()
+    }
+
+
 
     override fun getItemCount() = noteFilterList.size
 

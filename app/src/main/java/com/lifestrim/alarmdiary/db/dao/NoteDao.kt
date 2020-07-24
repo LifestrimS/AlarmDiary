@@ -20,4 +20,7 @@ interface NoteDao {
 
     @Update
     suspend fun updateNote(note: Note)
+
+    /*@Query("SELECT * FROM note_table WHERE categorycategory_name =:categoryName")
+    suspend fun getNoteByCategory(categoryName: String)*/
 }
