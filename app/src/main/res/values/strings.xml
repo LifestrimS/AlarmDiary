@@ -16,4 +16,6 @@
     <string name="category_name_empty">You need to enter name of category!</string>
     <string name="title_and_text_empty">Please Enter a Title and Text and select category</string>
     <string name="delete_category">- category</string>
+    <string name="placeholder">Placeholder</string>
+    <string name="categories">Categories</string>
 </resources>

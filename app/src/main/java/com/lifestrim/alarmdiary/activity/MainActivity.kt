@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.RadioButton
 import android.widget.SearchView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -20,13 +21,18 @@ import com.lifestrim.alarmdiary.R
 import com.lifestrim.alarmdiary.adapter.NoteListAdapter
 import com.lifestrim.alarmdiary.db.entity.Category
 import com.lifestrim.alarmdiary.db.entity.Note
-import com.lifestrim.alarmdiary.fragment.BottomNavigationDrawerFragment
+import com.lifestrim.alarmdiary.db.repository.CategoryRepository
+import com.lifestrim.alarmdiary.viewmodel.CategoryViewModel
 import com.lifestrim.alarmdiary.viewmodel.NoteViewModel
 import com.microsoft.appcenter.AppCenter
 import com.microsoft.appcenter.analytics.Analytics
 import com.microsoft.appcenter.crashes.Crashes
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.activity_new_note.*
 import java.util.*
+
+//TODO сразу открывает клавиатуру
+//TODO поиск по тексту
 
 class MainActivity : AppCompatActivity() {
     companion object {
@@ -122,17 +128,6 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item.itemId) {
-            android.R.id.home -> {
-                val bottomNavDrawerFragment = BottomNavigationDrawerFragment()
-                bottomNavDrawerFragment.show(supportFragmentManager, bottomNavDrawerFragment.tag)
-            }
-
-        }
-        return true
-    }
-
     private fun BottomAppBar.toggleFabAlignment() {
         currentFabAlignmentMode = fabAlignmentMode
         fabAlignmentMode = currentFabAlignmentMode.xor(1)
@@ -176,7 +171,38 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        val inflater = menuInflater
+        inflater.inflate(R.menu.bottom_nav_drawer_menu, menu)
 
+        var categoriesList : List<Category>
+        val categoryViewModel: CategoryViewModel = ViewModelProvider(this).get(CategoryViewModel::class.java)
+        categoryViewModel.allCategories.observe(this, Observer<List<Category>> { categories ->
+            categoriesList = categories
+            menu?.clear()
+            menu?.add(Menu.NONE, 0, Menu.NONE, "All categories")
+            for ((index, value) in categoriesList.withIndex()) {
+                menu?.add(Menu.NONE, index + 1, Menu.NONE, value.nameCategory)
+                Log.d("TAG", "categoriesList: $categoriesList")
+            }
+
+        })
+        return super.onCreateOptionsMenu(menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+
+        Toast.makeText(this, item.title.toString(), Toast.LENGTH_SHORT).show()
+
+        /*when (item.itemId) {
+            android.R.id.home -> {
+                val bottomNavDrawerFragment = BottomNavigationDrawerFragment()
+                bottomNavDrawerFragment.show(supportFragmentManager, bottomNavDrawerFragment.tag)
+            }
+
+        }*/
+        return true
+    }
 }
 
 

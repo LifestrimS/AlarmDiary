@@ -42,7 +42,6 @@
             android:backgroundTint="@color/primaryLightColor"
             app:hideOnScroll="true"
             app:layout_scrollFlags="scroll|enterAlways"
-            app:navigationIcon="@drawable/ic_filter"
             app:fabAlignmentMode="end"/>
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton

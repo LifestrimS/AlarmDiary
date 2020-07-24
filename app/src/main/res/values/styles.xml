@@ -6,6 +6,11 @@
         <item name="colorPrimary">@color/primaryColor</item>
         <item name="colorPrimaryDark">@color/primaryDarkColor</item>
         <item name="colorAccent">@color/secondaryColor</item>
+        <item name="android:actionOverflowButtonStyle">@style/actionBar</item>
+    </style>
+
+    <style name="actionBar" parent="Widget.AppCompat.ActionButton.Overflow">
+        <item name="android:src">@drawable/ic_filter</item>
     </style>
 
     <!-- The default font for RecyclerView items is too small.

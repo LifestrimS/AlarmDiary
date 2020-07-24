@@ -120,6 +120,8 @@ class NoteListAdapter : ListAdapter<Note, NoteListAdapter.NoteViewHolder>(DiffCa
                     val resultList = ArrayList<Note>()
                     for (row in notes) {
                         if (row.noteTitle.toLowerCase(Locale.ROOT)
+                                .contains(charSearch.toLowerCase(Locale.ROOT)) ||
+                            row.noteText.toLowerCase(Locale.ROOT)
                                 .contains(charSearch.toLowerCase(Locale.ROOT))
                         ) {
                             resultList.add(row)
