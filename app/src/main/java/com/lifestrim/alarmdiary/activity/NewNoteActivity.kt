@@ -4,7 +4,6 @@ import android.app.Activity
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.RadioButton
 import android.widget.Toast
@@ -24,11 +23,11 @@ import kotlinx.android.synthetic.main.activity_new_note.*
 class NewNoteActivity : AppCompatActivity(), ColorPickerDialogListener  {
 
     companion object {
-        val Extra_ID = "ExtraID"
-        val Extra_Title = "ExtraTitle"
-        val Extra_Text = "ExtraText"
-        val Extra_Category_Name = "ExtraCategoryName"
-        val Extra_Category_Color = "ExtraCategoryColor"
+        const val Extra_ID = "ExtraID"
+        const val Extra_Title = "ExtraTitle"
+        const val Extra_Text = "ExtraText"
+        const val Extra_Category_Name = "ExtraCategoryName"
+        const val Extra_Category_Color = "ExtraCategoryColor"
     }
 
     private lateinit var categoriesList : List<Category>
@@ -42,7 +41,7 @@ class NewNoteActivity : AppCompatActivity(), ColorPickerDialogListener  {
         categoryViewModel.allCategories.observe(this, Observer<List<Category>> { categories ->
             categoryRadioGroup.removeAllViews()
             categoriesList = categories
-            categories.forEach() {
+            categories.forEach {
                 val radioButton = RadioButton(this)
                 radioButton.text = it.nameCategory
                 it.colorCategory?.let { it1 -> radioButton.setTextColor(it1) }
@@ -68,7 +67,7 @@ class NewNoteActivity : AppCompatActivity(), ColorPickerDialogListener  {
         val text = edit_text.text.toString()
 
         if (title.trim().isEmpty() || text.trim().isEmpty() || categoryRadioGroup.checkedRadioButtonId == -1) {
-            Toast.makeText(this, R.string.title_and_text_empty, Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, R.string.toast_title_and_text_empty, Toast.LENGTH_SHORT).show()
             return
         }
         val newIntent = Intent()
@@ -80,7 +79,6 @@ class NewNoteActivity : AppCompatActivity(), ColorPickerDialogListener  {
         newIntent.putExtra(Extra_Category_Name, categoryChecked.text.toString())
         newIntent.putExtra(Extra_Category_Color, categoryChecked.currentTextColor)
 
-        Log.d("TAG", "color in NewNoteActivity: ${categoryChecked.currentTextColor} name: ${categoryChecked.text}")
 
 
         val id = intent.getIntExtra(Extra_ID, -1)
@@ -94,7 +92,7 @@ class NewNoteActivity : AppCompatActivity(), ColorPickerDialogListener  {
 
     fun addCategory(view: View) {
         if (categoryNameET.text.isEmpty()) {
-            Toast.makeText(this, R.string.category_name_empty, Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, R.string.toast_category_name_empty, Toast.LENGTH_SHORT).show()
         } else {
             createColorPickerDialog()
         }
@@ -121,7 +119,7 @@ class NewNoteActivity : AppCompatActivity(), ColorPickerDialogListener  {
             categoryViewModel.categoryInsert(category)
             categoryNameET.setText("")
         } else {
-            Toast.makeText(this, "This category already exists!", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, R.string.toast_category_already_exist, Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -130,8 +128,7 @@ class NewNoteActivity : AppCompatActivity(), ColorPickerDialogListener  {
     }
 
     private fun findCategories(category: Category): Int {
-        categoriesList.forEach() {
-            Log.d("TAG", "name: ${it.nameCategory} color: ${it.colorCategory} id: ${it.id}")
+        categoriesList.forEach {
             if (it.nameCategory == category.nameCategory && it.colorCategory == category.colorCategory) {
                 return it.id
             }
@@ -144,7 +141,7 @@ class NewNoteActivity : AppCompatActivity(), ColorPickerDialogListener  {
 
         if(radioButtonID == -1)
         {
-            Toast.makeText(this, "You must select a category to delete!", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, R.string.toast_select_category_to_delete, Toast.LENGTH_SHORT).show()
         } else {
             val checkedCategoryRB:RadioButton = findViewById(radioButtonID)
             val checkedCategory = Category(checkedCategoryRB.text.toString(),checkedCategoryRB.currentTextColor)

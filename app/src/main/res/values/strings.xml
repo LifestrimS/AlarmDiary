@@ -13,9 +13,19 @@
     <string name="nav_item3">nav_item3</string>
     <string name="category_name">Category name…</string>
 
-    <string name="category_name_empty">You need to enter name of category!</string>
-    <string name="title_and_text_empty">Please Enter a Title and Text and select category</string>
     <string name="delete_category">- category</string>
     <string name="placeholder">Placeholder</string>
     <string name="categories">Categories</string>
+    <string name="all_categories">All categories</string>
+
+    <string name="toast_note_deleted">Note deleted</string>
+    <string name="toast_note_saved">Note saved</string>
+    <string name="toast_note_cant_update">Note can\'t be update</string>
+    <string name="toast_note_updated">Note updated</string>
+    <string name="toast_note_isnt_saved">Note isn\'t saved</string>
+    <string name="toast_title_and_text_empty">Please Enter a Title and Text and select category</string>
+    <string name="toast_category_name_empty">You need to enter name of category!</string>
+    <string name="toast_category_already_exist">This category already exists!</string>
+    <string name="toast_select_category_to_delete">You must select a category to delete!</string>
+    <string name="toast_category_deleted">Category ${checkedCategory.nameCategory} deleted</string>
 </resources>

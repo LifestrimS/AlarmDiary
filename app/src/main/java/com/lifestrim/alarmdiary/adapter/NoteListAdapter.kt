@@ -2,7 +2,6 @@ package com.lifestrim.alarmdiary.adapter
 
 import android.annotation.SuppressLint
 import android.graphics.Color
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -35,7 +34,6 @@ class NoteListAdapter : ListAdapter<Note, NoteListAdapter.NoteViewHolder>(DiffCa
 
         init {
             noteFilterList = notes
-            Log.d("TAG", "NoteViewHolder init")
             itemView.setOnClickListener {
                 val position = adapterPosition
                 if (listener != null && position != RecyclerView.NO_POSITION) {
@@ -54,8 +52,6 @@ class NoteListAdapter : ListAdapter<Note, NoteListAdapter.NoteViewHolder>(DiffCa
 
         @SuppressLint("DiffUtilEquals")
         override fun areContentsTheSame(oldItem: Note, newItem: Note): Boolean {
-            // check if content is the same
-            // equals using data class
             return oldItem == newItem
         }
     }
@@ -63,14 +59,11 @@ class NoteListAdapter : ListAdapter<Note, NoteListAdapter.NoteViewHolder>(DiffCa
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NoteViewHolder {
         val itemView = LayoutInflater.from(parent.context)
             .inflate(R.layout.recyclerview_item, parent, false)
-        Log.d("TAG", "onCreateViewHolder")
         return NoteViewHolder(itemView)
     }
 
     override fun onBindViewHolder(holder: NoteViewHolder, position: Int) {
         val current = noteFilterList[position]
-
-        Log.d("TAG", "onBindViewHolder")
 
         holder.noteItemTitle.text = current.noteTitle
         holder.noteItemText.text = current.noteText
@@ -95,7 +88,6 @@ class NoteListAdapter : ListAdapter<Note, NoteListAdapter.NoteViewHolder>(DiffCa
                 notesWithCategory.add(it)
             }
         }
-        Log.d("TAG", "notesListCategory: $notesWithCategory")
         this.notes = notesWithCategory
         this.noteFilterList = notesWithCategory
         notifyDataSetChanged()
@@ -116,8 +108,6 @@ class NoteListAdapter : ListAdapter<Note, NoteListAdapter.NoteViewHolder>(DiffCa
 
     fun setOnClickListener(listener: OnItemClickListener) {
         this.listener = listener
-//        this is setter method to pass the interface reference to we can use it in
-//        onViewBindHolder
     }
 
     override fun getFilter(): Filter {
@@ -126,7 +116,6 @@ class NoteListAdapter : ListAdapter<Note, NoteListAdapter.NoteViewHolder>(DiffCa
                 val charSearch = constraint.toString()
                 if (charSearch.isEmpty()) {
                     noteFilterList = notes
-                    Log.d("TAG", "Search empty work")
                 } else {
                     val resultList = ArrayList<Note>()
                     for (row in notes) {
@@ -136,15 +125,12 @@ class NoteListAdapter : ListAdapter<Note, NoteListAdapter.NoteViewHolder>(DiffCa
                                 .contains(charSearch.toLowerCase(Locale.ROOT))
                         ) {
                             resultList.add(row)
-                            Log.d("TAG", "Search result: $row")
                         }
                     }
                     noteFilterList = resultList
-                    Log.d("TAG", "Search not empty work, resultList: $resultList")
                 }
                 val filterResults = FilterResults()
                 filterResults.values = noteFilterList
-                Log.d("TAG", "Search filterResults: ${filterResults.values}")
                 return filterResults
             }
 
@@ -152,7 +138,6 @@ class NoteListAdapter : ListAdapter<Note, NoteListAdapter.NoteViewHolder>(DiffCa
             override fun publishResults(constraint: CharSequence?, results: FilterResults?) {
                 noteFilterList = results?.values as List<Note>
                 notifyDataSetChanged()
-                Log.d("TAG", "Search publish result")
             }
 
         }

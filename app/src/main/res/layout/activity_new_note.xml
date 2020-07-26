@@ -19,7 +19,8 @@
             android:hint="@string/hint_title"
             android:inputType="textAutoComplete|textCapWords"
             android:minHeight="@dimen/min_height"
-            android:textSize="18sp" />
+            android:textSize="18sp"
+            />
 
         <EditText
             android:id="@+id/edit_text"
@@ -49,7 +50,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:padding="16dp">
+            android:padding="@dimen/big_padding">
 
             <EditText
                 android:id="@+id/categoryNameET"
@@ -75,16 +76,15 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_marginHorizontal="16dp"
-                android:onClick="deleteCategory"
                 android:background="@drawable/round_corner"
-                app:srcCompat="@drawable/ic_baseline_delete_24"
-                android:contentDescription="@string/delete_category" />
+                android:contentDescription="@string/delete_category"
+                android:onClick="deleteCategory"
+                app:srcCompat="@drawable/ic_baseline_delete_24" />
 
 
         </LinearLayout>
 
         <View style="@style/Divider" />
-
 
 
         <Button

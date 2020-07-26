@@ -3,10 +3,8 @@ package com.lifestrim.alarmdiary.activity
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
-import android.widget.RadioButton
 import android.widget.SearchView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -15,23 +13,19 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.google.android.material.bottomappbar.BottomAppBar
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.lifestrim.alarmdiary.R
 import com.lifestrim.alarmdiary.adapter.NoteListAdapter
 import com.lifestrim.alarmdiary.db.entity.Category
 import com.lifestrim.alarmdiary.db.entity.Note
-import com.lifestrim.alarmdiary.db.repository.CategoryRepository
 import com.lifestrim.alarmdiary.viewmodel.CategoryViewModel
 import com.lifestrim.alarmdiary.viewmodel.NoteViewModel
 import com.microsoft.appcenter.AppCenter
 import com.microsoft.appcenter.analytics.Analytics
 import com.microsoft.appcenter.crashes.Crashes
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.activity_new_note.*
 import java.util.*
 
-//TODO сразу открывает клавиатуру
 
 class MainActivity : AppCompatActivity() {
     companion object {
@@ -39,17 +33,13 @@ class MainActivity : AppCompatActivity() {
         const val EDIT_NOTE_REQUEST = 2
     }
 
-    lateinit var recyclerView : RecyclerView
+    private lateinit var recyclerView : RecyclerView
     val adapter = NoteListAdapter()
-
     private lateinit var noteViewModel: NoteViewModel
-
-    private var currentFabAlignmentMode = BottomAppBar.FAB_ALIGNMENT_MODE_CENTER
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
         setSupportActionBar(bottomAppBar)
 
         AppCenter.start(
@@ -57,13 +47,10 @@ class MainActivity : AppCompatActivity() {
             Analytics::class.java, Crashes::class.java
         )
 
-
         recyclerView = findViewById(R.id.recyclerview)
-        //val adapter = NoteListAdapter()
         recyclerView.adapter = adapter
         recyclerView.setHasFixedSize(true)
         recyclerView.layoutManager = LinearLayoutManager(this)
-
 
         noteViewModel = ViewModelProvider(this).get(NoteViewModel::class.java)
         noteViewModel.allNotes.observe(this, Observer { notes ->
@@ -72,10 +59,21 @@ class MainActivity : AppCompatActivity() {
             }
         })
 
+        adapter.setOnClickListener(object : NoteListAdapter.OnItemClickListener {
+            override fun onItemClick(note: Note) {
+                val intent = Intent(this@MainActivity, NewNoteActivity::class.java)
+                intent.putExtra(NewNoteActivity.Extra_ID, note.id)
+                intent.putExtra(NewNoteActivity.Extra_Title, note.noteTitle)
+                intent.putExtra(NewNoteActivity.Extra_Text, note.noteText)
+                startActivityForResult(intent, EDIT_NOTE_REQUEST)
+            }
+
+        })
+
         val fab = findViewById<FloatingActionButton>(R.id.fab)
         fab.setOnClickListener {
             val intent = Intent(this@MainActivity, NewNoteActivity::class.java)
-            startActivityForResult(intent, MainActivity.ADD_NOTE_REQUEST)
+            startActivityForResult(intent, ADD_NOTE_REQUEST)
         }
 
         val itemTouchCallback = object : ItemTouchHelper.SimpleCallback(
@@ -93,25 +91,13 @@ class MainActivity : AppCompatActivity() {
 
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
                 noteViewModel.deleteNote(adapter.getNoteAt(viewHolder.adapterPosition))
-                Toast.makeText(this@MainActivity, "Note Deleted", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this@MainActivity, R.string.toast_note_deleted, Toast.LENGTH_SHORT).show()
             }
 
         }
 
-        adapter.setOnClickListener(object : NoteListAdapter.OnItemClickListener {
-            override fun onItemClick(note: Note) {
-                val intent = Intent(this@MainActivity, NewNoteActivity::class.java)
-                intent.putExtra(NewNoteActivity.Extra_ID, note.id)
-                intent.putExtra(NewNoteActivity.Extra_Title, note.noteTitle)
-                intent.putExtra(NewNoteActivity.Extra_Text, note.noteText)
-                startActivityForResult(intent, MainActivity.EDIT_NOTE_REQUEST)
-            }
-
-        })
-
         val itemTouchHelper = ItemTouchHelper(itemTouchCallback)
         itemTouchHelper.attachToRecyclerView(recyclerView)
-
 
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
@@ -127,47 +113,41 @@ class MainActivity : AppCompatActivity() {
 
     }
 
-
-    private fun BottomAppBar.toggleFabAlignment() {
-        currentFabAlignmentMode = fabAlignmentMode
-        fabAlignmentMode = currentFabAlignmentMode.xor(1)
-    }
-
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == MainActivity.ADD_NOTE_REQUEST && resultCode == Activity.RESULT_OK) {
-            val title = data?.getStringExtra(NewNoteActivity.Extra_Title)
-            val description = data?.getStringExtra(NewNoteActivity.Extra_Text)
+        if (requestCode == ADD_NOTE_REQUEST && resultCode == Activity.RESULT_OK) {
 
-            val categoryName = data?.getStringExtra(NewNoteActivity.Extra_Category_Name)
-            val categoryColor = data?.getIntExtra(NewNoteActivity.Extra_Category_Color, 0)
-            val noteCategory = Category(categoryName, categoryColor)
-
-            Log.d("TAG", "color in MainActivity: $categoryColor")
-
-            val note = Note(title!!, description!!, Calendar.getInstance().time, noteCategory)
+            val note = Note(data?.getStringExtra(NewNoteActivity.Extra_Title)!!,
+                data.getStringExtra(NewNoteActivity.Extra_Text)!!,
+                Calendar.getInstance().time,
+                Category(data.getStringExtra(NewNoteActivity.Extra_Category_Name),
+                    data.getIntExtra(NewNoteActivity.Extra_Category_Color, 0))
+            )
 
             noteViewModel.insertNote(note)
-            Toast.makeText(this, "Note Saved", Toast.LENGTH_SHORT).show()
-        } else if (requestCode == MainActivity.EDIT_NOTE_REQUEST && resultCode == Activity.RESULT_OK) {
+            Toast.makeText(this, R.string.toast_note_saved, Toast.LENGTH_SHORT).show()
+
+        } else if (requestCode == EDIT_NOTE_REQUEST && resultCode == Activity.RESULT_OK) {
             val id = data?.getIntExtra(NewNoteActivity.Extra_ID, -1)
             if (id == -1) {
-                Toast.makeText(this, "Note can't be updated", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, R.string.toast_note_cant_update, Toast.LENGTH_SHORT).show()
                 return
             }
-            val title = data?.getStringExtra(NewNoteActivity.Extra_Title)
-            val description = data?.getStringExtra(NewNoteActivity.Extra_Text)
 
-            val categoryName = data?.getStringExtra(NewNoteActivity.Extra_Category_Name)
-            val categoryColor = data?.getIntExtra(NewNoteActivity.Extra_Category_Color, 0)
-            val noteCategory = Category(categoryName, categoryColor)
+            val note = Note(data?.getStringExtra(NewNoteActivity.Extra_Title)!!,
+                data.getStringExtra(NewNoteActivity.Extra_Text)!!,
+                Calendar.getInstance().time,
+                Category(data.getStringExtra(NewNoteActivity.Extra_Category_Name),
+                    data.getIntExtra(NewNoteActivity.Extra_Category_Color, 0))
+            )
 
-            val note = Note(title!!, description!!, Calendar.getInstance().time, noteCategory)
             note.id = id!!
             noteViewModel.updateNote(note)
-            Toast.makeText(this, "Note Updated", Toast.LENGTH_SHORT).show()
+
+            Toast.makeText(this, R.string.toast_note_updated, Toast.LENGTH_SHORT).show()
         } else {
-            Toast.makeText(this, "No Note Saved", Toast.LENGTH_SHORT).show()
+
+            Toast.makeText(this, R.string.toast_note_isnt_saved, Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -180,10 +160,9 @@ class MainActivity : AppCompatActivity() {
         categoryViewModel.allCategories.observe(this, Observer<List<Category>> { categories ->
             categoriesList = categories
             menu?.clear()
-            menu?.add(Menu.NONE, 0, Menu.NONE, "All categories")
+            menu?.add(Menu.NONE, 0, Menu.NONE, R.string.all_categories)
             for ((index, value) in categoriesList.withIndex()) {
                 menu?.add(Menu.NONE, index + 1, Menu.NONE, value.nameCategory)
-                Log.d("TAG", "categoriesList: $categoriesList")
             }
 
         })
@@ -199,18 +178,16 @@ class MainActivity : AppCompatActivity() {
                 }
             })
         } else {
-            Log.d("TAG", "onOptionsItemSelected 1")
-            //noteViewModel = ViewModelProvider(this).get(NoteViewModel::class.java)
             noteViewModel.allNotes.observe(this, Observer { notes ->
                 notes?.let {
                     adapter.setNotesByCategory(it, item.title.toString())
-                    Log.d("TAG", "item.title: ${item.title}")
                 }
             })
         }
 
         return true
     }
+
 }
 
 
